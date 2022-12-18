@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: db-connections-deployment
+  labels:
+    app: db-connections
+spec:
+  selector:
+    matchLabels:
+      app: db-connections
+  template:
+    metadata:
+      labels:
+        app: db-connections
+    spec:
+      containers:
+      - name: pdpro-container
+        image: image-registry.openshift-image-registry.svc:5000/[project-name]/db-connections:[build-date]
+        ports:
+        - containerPort: 9080
+      imagePullSecrets:
+      - name: docker-user-secret
+--- 
+apiVersion: v1
+kind: Service
+metadata:
+  name: db-connections-service
+spec:
+  selector:
+    app: db-connections
+  ports:
+  - protocol: TCP
+    port: 9080
+---
+apiVersion: v1
+kind: Route
+metadata:
+  name: db-connections-route
+spec:
+  to:
+    kind: Service
+    name: db-connections-service
