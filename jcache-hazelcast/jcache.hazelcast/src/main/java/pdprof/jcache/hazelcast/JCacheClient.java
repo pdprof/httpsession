@@ -23,6 +23,7 @@ public class JCacheClient {
 
 		String address = "localhost:5701";
 		String app = "default_host%2Fhttpsession";
+		String mode = "normal"; // array or delete or other
 		String deleteid = "dummy_session_id";
 		if (args.length > 0) {
 			address = args[0]; 
@@ -31,7 +32,10 @@ public class JCacheClient {
 			app = args[1];
 		} 
 		if (args.length > 2) {
-			deleteid = args[2];
+			mode = args[2];
+		}
+		if (args.length > 3) {
+			deleteid = args[3];
 		}
 		
 		ClientConfig clientConfig = new ClientConfig();
@@ -56,11 +60,13 @@ public class JCacheClient {
 		while(it.hasNext()) {
 			Cache.Entry<String, ArrayList> entry = (Entry<String, ArrayList>)it.next();
 			System.out.println("Key: " + entry.getKey());
-			for(Object o: entry.getValue()) {
-				if (o != null)
-					System.out.println(o.toString());
-				else 
-					System.out.println(o);
+			if(mode.equalsIgnoreCase("array")) {
+				for(Object o: entry.getValue()) {
+					if (o != null)
+						System.out.println(o.toString());
+					else 
+						System.out.println(o);
+				}
 			}
 		}
 		
@@ -70,23 +76,23 @@ public class JCacheClient {
 			System.out.println("Key: " + entry.getKey());
 		}
 		
-
-		System.out.println("Try to remove " + deleteid + " from meta cache.");
-		if(meta.remove(deleteid)) {
-			System.out.println(deleteid + " session is removed from meta cache." );
-			it = attr.iterator();
-			while(it.hasNext()) {
-				Cache.Entry<String, byte[]> entry = ((Entry<String, byte[]>)it.next());
-				if(entry.getKey().startsWith(deleteid)) {
-					if (attr.remove(entry.getKey())) {
-						System.out.println(entry.getKey() + " attr is removed from attr cache.");
+		if (mode.equalsIgnoreCase("delete")) {
+			System.out.println("Try to remove " + deleteid + " from meta cache.");
+			if(meta.remove(deleteid)) {
+				System.out.println(deleteid + " session is removed from meta cache." );
+				it = attr.iterator();
+				while(it.hasNext()) {
+					Cache.Entry<String, byte[]> entry = ((Entry<String, byte[]>)it.next());
+					if(entry.getKey().startsWith(deleteid)) {
+						if (attr.remove(entry.getKey())) {
+							System.out.println(entry.getKey() + " attr is removed from attr cache.");
+						}
 					}
 				}
+			} else {
+				System.out.println(deleteid + " session is not found in meta cache.");
 			}
-		} else {
-			System.out.println(deleteid + " session is not found in meta cache.");
 		}
-		
 		System.exit(0);
 		
 	}
