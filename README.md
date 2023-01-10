@@ -1,5 +1,5 @@
-# db-connections
-DB Connections/Connection Pooling
+# httpsession
+HTTP Session sample
 
 ## Import eclipse project
 
