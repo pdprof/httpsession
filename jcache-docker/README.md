@@ -18,7 +18,7 @@ setup-docker.sh
 ./httpsession-start.sh
 ```
 
-Now you can access http://localhost:9080/httpsession/sesssion
+Now you can access http://localhost:9080/httpsession/session
 
 
 ## Test on OpenShift

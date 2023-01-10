@@ -14,6 +14,5 @@ fi
 
 # Setup for derby
 sed s/localhost:5701/$ACCESS_HOST:5701/g config/hazelcast.xml > hazelcast.xml.custom
-docker build -t httpsession-base -f Dockerfile.base .
 docker build -t httpsession .
 rm hazelcast.xml.custom
